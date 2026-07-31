@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeSync AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🏠 HomeSync AI</h1>
+    <p>Smart Living, Simplified</p>
+</header>
+
+<section class="status">
+
+    <div class="card">
+        <h2>💡 Light</h2>
+        <button id="lightBtn">OFF</button>
+    </div>
+
+    <div class="card">
+        <h2>🌀 Fan</h2>
+        <button id="fanBtn">OFF</button>
+    </div>
+
+    <div class="card">
+        <h2>☁️ Cloud Service</h2>
+        <p>Powered by Sinric Pro</p>
+    </div>
+
+    <div class="card">
+        <h2>🌍 Remote Access</h2>
+        <p>Available Anywhere</p>
+    </div>
+
+    <div class="card">
+        <h2>🎤 Alexa</h2>
+        <p>Enabled</p>
+    </div>
+
+    <div class="card">
+        <h2>👏 Clap Control</h2>
+        <p>Enabled</p>
+    </div>
+
+</section>
+
+<!-- AI Assistant -->
+
+<div class="card" style="width:90%;max-width:700px;margin:30px auto;">
+
+<h2>🤖 HomeSync AI Assistant</h2>
+
+<div id="chatBox"
+style="height:220px;
+background:#0f172a;
+overflow-y:auto;
+padding:15px;
+border-radius:10px;
+text-align:left;
+margin-bottom:15px;">
+
+<p><b>HomeSync AI:</b> Welcome! I can control your smart home.</p>
+<p><b>Try:</b> Turn on the light</p>
+
+</div>
+
+<input
+id="userInput"
+type="text"
+placeholder="Type your command..."
+style="width:75%;
+padding:12px;
+border-radius:8px;
+border:none;">
+
+<button onclick="sendMessage()">Send</button>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
