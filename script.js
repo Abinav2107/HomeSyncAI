@@ -162,12 +162,17 @@ updateButtons();
 
 function startVoice() {
 
+    const mic = event.target;
+
+    mic.innerHTML = "🎙️";
+    mic.style.background = "red";
+
     const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-        alert("Speech recognition is not supported in this browser.");
+        alert("Speech recognition is not supported.");
         return;
     }
 
@@ -178,13 +183,19 @@ function startVoice() {
 
     recognition.onresult = function(event) {
 
-        const command = event.results[0][0].transcript;
-
-        document.getElementById("userInput").value = command;
+        document.getElementById("userInput").value =
+            event.results[0][0].transcript;
 
         sendMessage();
 
     };
+
+    recognition.onend = function(){
+
+        mic.innerHTML = "🎤";
+        mic.style.background = "#2563eb";
+
+    }
 
     recognition.start();
 
