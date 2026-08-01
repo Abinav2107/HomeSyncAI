@@ -42,11 +42,18 @@ fanBtn.onclick = async () => {
 
 const chatBox = document.getElementById("chatBox");
 
-function addMessage(sender,message){
+function addMessage(sender, message) {
 
     chatBox.innerHTML += `<p><b>${sender}:</b> ${message}</p>`;
 
     chatBox.scrollTop = chatBox.scrollHeight;
+
+    // AI speaks only its own replies
+    if (sender === "HomeSync AI") {
+        const speech = new SpeechSynthesisUtterance(message);
+        speech.lang = "en-US";
+        speechSynthesis.speak(speech);
+    }
 
 }
 
@@ -115,6 +122,29 @@ async function sendMessage(){
         addMessage("HomeSync AI","🌀 Fan turned OFF");
 
     }
+        else if(text.includes("hello")){
+
+    addMessage("HomeSync AI","Hello! Nice to meet you.");
+
+}
+
+else if(text.includes("how are you")){
+
+    addMessage("HomeSync AI","I'm doing great! Ready to control your smart home.");
+
+}
+
+else if(text.includes("good morning")){
+
+    addMessage("HomeSync AI","Good morning! Have a wonderful day.");
+
+}
+
+else if(text.includes("good night")){
+
+    addMessage("HomeSync AI","Good night! Sleep well.");
+
+}
 
     else{
 
@@ -198,9 +228,16 @@ function startVoice() {
     }
 
     recognition.start();
+    addMessage("HomeSync AI", "🎤 Listening...");
 
 }
 
     input.value="";
 
 }
+window.onload = function () {
+    addMessage(
+        "HomeSync AI",
+        "Hello! Welcome to HomeSync AI. How can I help you today?"
+    );
+};
