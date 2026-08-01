@@ -124,6 +124,38 @@ async function sendMessage(){
         );
 
     }
+    // ===============================
+// Sync button states from Cloudflare
+// ===============================
+
+async function updateButtons() {
+
+    try {
+
+        const response = await fetch(WORKER + "/status");
+        const data = await response.json();
+
+        // Light
+        lightState = (data.light === "On");
+        lightBtn.innerHTML = lightState ? "ON" : "OFF";
+        lightBtn.style.background = lightState ? "green" : "#2563eb";
+
+        // Fan
+        fanState = (data.fan === "On");
+        fanBtn.innerHTML = fanState ? "ON" : "OFF";
+        fanBtn.style.background = fanState ? "green" : "#2563eb";
+
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
+// Update every second
+setInterval(updateButtons, 1000);
+
+// Update immediately when page loads
+updateButtons();
 
     input.value="";
 
