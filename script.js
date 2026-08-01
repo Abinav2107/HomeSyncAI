@@ -8,12 +8,11 @@ const input = document.getElementById("userInput");
 let lightState = false;
 let fanState = false;
 
-// =======================================
-// Manual Button Control
-// =======================================
+// ==========================
+// Button Controls
+// ==========================
 
-lightBtn.onclick = async () => {
-
+lightBtn.onclick = async function () {
     lightState = !lightState;
 
     try {
@@ -22,12 +21,10 @@ lightBtn.onclick = async () => {
         console.log(e);
     }
 
-    updateLightButton();
-
+    updateButtonUI();
 };
 
-fanBtn.onclick = async () => {
-
+fanBtn.onclick = async function () {
     fanState = !fanState;
 
     try {
@@ -36,36 +33,50 @@ fanBtn.onclick = async () => {
         console.log(e);
     }
 
-    updateFanButton();
-
+    updateButtonUI();
 };
 
-// =======================================
-// Update Buttons
-// =======================================
+// ==========================
+// Update Button UI
+// ==========================
 
-function updateLightButton() {
+function updateButtonUI() {
 
     lightBtn.innerHTML = lightState ? "ON" : "OFF";
     lightBtn.style.background = lightState ? "green" : "#2563eb";
 
-}
-
-function updateFanButton() {
-
     fanBtn.innerHTML = fanState ? "ON" : "OFF";
     fanBtn.style.background = fanState ? "green" : "#2563eb";
-
 }
 
-// =======================================
+// ==========================
+// Read status from Worker
+// ==========================
+
+async function updateButtons() {
+
+    try {
+
+        const response = await fetch(WORKER + "/status");
+        const data = await response.json();
+
+        lightState = (data.light === "On");
+        fanState = (data.fan === "On");
+
+        updateButtonUI();
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+// ==========================
 // Chat
-// =======================================
+// ==========================
 
 function addMessage(sender, message) {
 
     chatBox.innerHTML += `<p><b>${sender}:</b> ${message}</p>`;
-
     chatBox.scrollTop = chatBox.scrollHeight;
 
     if (sender === "HomeSync AI") {
@@ -73,24 +84,21 @@ function addMessage(sender, message) {
         speechSynthesis.cancel();
 
         const speech = new SpeechSynthesisUtterance(message);
-
         speech.lang = "en-US";
 
         speechSynthesis.speak(speech);
-
     }
-
 }
 
-// =======================================
+// ==========================
 // AI Commands
-// =======================================
+// ==========================
 
 async function sendMessage() {
 
-    const text = input.value.toLowerCase().trim();
+    const text = input.value.trim().toLowerCase();
 
-    if (text == "") return;
+    if (text === "") return;
 
     addMessage("You", input.value);
 
@@ -100,9 +108,9 @@ async function sendMessage() {
 
         lightState = true;
 
-        updateLightButton();
+        updateButtonUI();
 
-        addMessage("HomeSync AI", "💡 Light turned ON");
+        addMessage("HomeSync AI", "Light turned ON.");
 
     }
 
@@ -112,9 +120,9 @@ async function sendMessage() {
 
         lightState = false;
 
-        updateLightButton();
+        updateButtonUI();
 
-        addMessage("HomeSync AI", "💡 Light turned OFF");
+        addMessage("HomeSync AI", "Light turned OFF.");
 
     }
 
@@ -124,9 +132,9 @@ async function sendMessage() {
 
         fanState = true;
 
-        updateFanButton();
+        updateButtonUI();
 
-        addMessage("HomeSync AI", "🌀 Fan turned ON");
+        addMessage("HomeSync AI", "Fan turned ON.");
 
     }
 
@@ -136,9 +144,9 @@ async function sendMessage() {
 
         fanState = false;
 
-        updateFanButton();
+        updateButtonUI();
 
-        addMessage("HomeSync AI", "🌀 Fan turned OFF");
+        addMessage("HomeSync AI", "Fan turned OFF.");
 
     }
 
@@ -168,18 +176,19 @@ async function sendMessage() {
 
     else {
 
-        addMessage("HomeSync AI",
-            "I understand commands like Turn on the light or Turn off the fan.");
+        addMessage(
+            "HomeSync AI",
+            "Try saying Turn on the light or Turn off the fan."
+        );
 
     }
 
     input.value = "";
-
 }
 
-// =======================================
+// ==========================
 // Voice Recognition
-// =======================================
+// ==========================
 
 function startVoice() {
 
@@ -192,22 +201,16 @@ function startVoice() {
         alert("Speech Recognition not supported.");
 
         return;
-
     }
 
     const recognition = new SpeechRecognition();
 
     recognition.lang = "en-US";
-
     recognition.interimResults = false;
 
-    recognition.maxAlternatives = 1;
+    addMessage("HomeSync AI", "Listening...");
 
-    recognition.start();
-
-    addMessage("HomeSync AI", "🎤 Listening...");
-
-    recognition.onresult = function(event) {
+    recognition.onresult = function (event) {
 
         input.value = event.results[0][0].transcript;
 
@@ -215,65 +218,14 @@ function startVoice() {
 
     };
 
-    recognition.onerror = function() {
-
-        addMessage("HomeSync AI", "Sorry, I couldn't hear you.");
-
-    };
-
+    recognition.start();
 }
 
-// =======================================
-// Website Sync
-// =======================================
+// ==========================
+// Start
+// ==========================
 
-async function updateButtons() {
-
-    try {
-
-        const response = await fetch(WORKER + "/status");
-
-        const data = await response.json();
-
-        lightState = (data.light === "On");
-
-        fanState = (data.fan === "On");
-
-        updateLightButton();
-
-        updateFanButton();
-
-    }
-
-    catch(e) {
-
-        console.log(e);
-
-    }
-
-}
-
-setInterval(updateButtons,1000);
-
-// =======================================
-// Enter Key Support
-// =======================================
-
-input.addEventListener("keypress",function(e){
-
-    if(e.key==="Enter"){
-
-        sendMessage();
-
-    }
-
-});
-
-// =======================================
-// Startup
-// =======================================
-
-window.onload = function(){
+window.onload = function () {
 
     addMessage(
         "HomeSync AI",
@@ -282,4 +234,5 @@ window.onload = function(){
 
     updateButtons();
 
+    setInterval(updateButtons, 1000);
 };
