@@ -156,6 +156,39 @@ setInterval(updateButtons, 1000);
 
 // Update immediately when page loads
 updateButtons();
+    // ===============================
+// Voice Control
+// ===============================
+
+function startVoice() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        alert("Speech recognition is not supported in this browser.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+
+        const command = event.results[0][0].transcript;
+
+        document.getElementById("userInput").value = command;
+
+        sendMessage();
+
+    };
+
+    recognition.start();
+
+}
 
     input.value="";
 
